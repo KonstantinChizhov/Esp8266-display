@@ -67,7 +67,7 @@ struct UrlReader
     UrlReader operator++(int)
     {
         UrlReader temp(_url);
-        (*this)++;
+        ++(*this);
         return temp;
     }
 };
