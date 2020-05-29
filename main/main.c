@@ -37,60 +37,42 @@ esp_err_t html_get_js(httpd_req_t *req);
 
 void display_task(void *arg);
 
-httpd_uri_t text_uri = {
+const httpd_uri_t text_uri = {
     .uri = "/api/v1/display/text",
     .method = HTTP_GET,
     .handler = display_text_get_handler,
 };
 
-httpd_uri_t clear_uri = {
+const httpd_uri_t clear_uri = {
     .uri = "/api/v1/display/clear",
     .method = HTTP_GET,
     .handler = display_clear_get_handler,
 };
 
-httpd_uri_t index_uri = {
+const httpd_uri_t index_uri = {
     .uri = "/index.html",
     .method = HTTP_GET,
     .handler = html_get_index,
 };
 
-httpd_uri_t default_uri = {
+const httpd_uri_t default_uri = {
     .uri = "/",
     .method = HTTP_GET,
     .handler = html_get_index,
 };
 
-httpd_uri_t css_uri = {
+const httpd_uri_t css_uri = {
     .uri = "/main.css",
     .method = HTTP_GET,
     .handler = html_get_css,
 };
 
-httpd_uri_t js_uri = {
+const httpd_uri_t js_uri = {
     .uri = "/scripts.js",
     .method = HTTP_GET,
     .handler = html_get_js,
 };
 
-/* An HTTP PUT handler. This demonstrates realtime
- * registration and deregistration of URI handlers
- */
-esp_err_t ctrl_put_handler(httpd_req_t *req)
-{
-    char buf;
-    int ret;
-
-    /* Respond with empty body */
-    httpd_resp_send(req, NULL, 0);
-    return ESP_OK;
-}
-
-httpd_uri_t ctrl = {
-    .uri = "/ctrl",
-    .method = HTTP_PUT,
-    .handler = ctrl_put_handler,
-    .user_ctx = NULL};
 
 httpd_handle_t start_webserver(void)
 {
@@ -109,8 +91,6 @@ httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &css_uri);
         httpd_register_uri_handler(server, &js_uri);
         httpd_register_uri_handler(server, &default_uri);
-
-        //httpd_register_uri_handler(server, &ctrl);
         return server;
     }
 
@@ -194,5 +174,5 @@ void app_main()
     static httpd_handle_t server = NULL;
     ESP_ERROR_CHECK(nvs_flash_init());
     initialise_wifi(&server);
-    xTaskCreate(display_task, "display_task", 2048, NULL, 10, NULL);
+    xTaskCreate(display_task, "display_task", 1024+512, NULL, 10, NULL);
 }

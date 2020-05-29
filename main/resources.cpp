@@ -5,23 +5,23 @@
 #include "./font11x16.h"
 
 
-FontInfo smallFontAscii = 
+const FontInfo smallFontAscii = 
 {
 	' ', '~', font5x8Ascii, 0
 };
-FontInfo smallFontRus = 
+const FontInfo smallFontRus = 
 {
 	0x410, 0x44F, font5x8Rus, 0
 };
 
-FontInfo smallFontData[] = {smallFontAscii, smallFontRus};
+const FontInfo smallFontData[] = {smallFontAscii, smallFontRus};
 
-FontInfo bigFontAscii = 
+const FontInfo bigFontAscii = 
 {
 	' ', '~', font11x16, font11x16Descr
 };
 
-FontInfo bigFontData[]={bigFontAscii};
+const FontInfo bigFontData[]={bigFontAscii};
 
 
 RastrFont<const uint8_t*, const CharInfo* > smallFont(smallFontData, 2, 5, 8, '?');
