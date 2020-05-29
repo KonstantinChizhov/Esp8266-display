@@ -19,10 +19,15 @@
         <div id="content">
             <div id="Form">
                 <p>Type a text:</p>
-                <textarea id="textToSend" cols="25" rows="8"></textarea>
-                <p>
-                <input type="button" name="Send" value="Send" onclick="sendtext()" />
-                <input type="button" name="Clear" value="Clear" onclick="clear_display()" />
+                <p><textarea id="textToSend" cols="25" rows="8"></textarea></p>
+                <p>Black or white: <input type="checkbox" id="color"></p>
+                <p>Small/big font: <input type="checkbox" id="font"></p>
+                <p>X: <input type="text" id="x_coord" value="0" size="5" /> Y: <input type="text" id="y_coord" value="0"
+                    size="5" /></p>
+
+                <p><input type="button" name="Send" value="Send" onclick="sendtext()" />
+                    <input type="button" name="Clear" value="Clear" onclick="clear_display()" />
+                </p>
             </div>
         </div>
     </div>
