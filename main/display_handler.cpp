@@ -18,7 +18,7 @@ static const char *TAG = "DISP";
 Ssd1306<EspI2c> display;
 using MyPainter = Painter<Ssd1306<EspI2c>>;
 constexpr int MaxText = 200;
-constexpr int ParamBuffSize = 400;
+constexpr int ParamBuffSize = 400; // max URL size is limited to 512
 
 struct Params
 {
@@ -174,6 +174,7 @@ void draw_text(MyPainter &painter, Params &params)
 extern "C" esp_err_t
 display_text_get_handler(httpd_req_t *req)
 {
+    ESP_LOGI(TAG, "Draw text");
     MyPainter painter(display);
     params.Reset();
     ApplyCommonParameters(req, params, painter);
@@ -187,6 +188,7 @@ display_text_get_handler(httpd_req_t *req)
 extern "C" esp_err_t
 display_clear_get_handler(httpd_req_t *req)
 {
+    ESP_LOGI(TAG, "Clear screen");
     MyPainter painter(display);
     params.Reset();
     ApplyCommonParameters(req, params, painter);

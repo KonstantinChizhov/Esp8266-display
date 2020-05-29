@@ -20,6 +20,7 @@ html_get_index(httpd_req_t *req)
 extern "C" esp_err_t
 html_get_css(httpd_req_t *req)
 {
+    httpd_resp_set_type(req, "text/css");
     httpd_resp_send(req, main_css, strlen(main_css));
     return ESP_OK;
 }
@@ -27,6 +28,7 @@ html_get_css(httpd_req_t *req)
 extern "C" esp_err_t
 html_get_js(httpd_req_t *req)
 {
+    httpd_resp_set_type(req, "application/x-javascript");
     httpd_resp_send(req, scripts_js, strlen(scripts_js));
     return ESP_OK;
 }
