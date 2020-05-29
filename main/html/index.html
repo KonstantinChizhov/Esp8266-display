@@ -7,30 +7,35 @@
 </head>
 
 <body>
-    <script language="javascript">
-        window.onpageshow = function (e) {
 
-        }
-    </script>
     <div id="container">
         <div id="header">
             <h2>ESP8266 WEB Display</h2>
         </div>
         <div id="content">
-            <div id="Form">
+            <div id="text">
                 <p>Type a text:</p>
                 <p><textarea id="textToSend" cols="25" rows="8"></textarea></p>
                 <p>Black or white: <input type="checkbox" id="color"></p>
                 <p>Small/big font: <input type="checkbox" id="font"></p>
                 <p>X: <input type="text" id="x_coord" value="0" size="5" /> Y: <input type="text" id="y_coord" value="0"
-                    size="5" /></p>
+                        size="5" /></p>
 
                 <p><input type="button" name="Send" value="Send" onclick="sendtext()" />
                     <input type="button" name="Clear" value="Clear" onclick="clear_display()" />
                 </p>
             </div>
+            <div id="draw_image">
+                <p>Draw an image:</p>
+                <canvas id="canvasElem" width="128" height="64" style="border:1px solid"></canvas>
+                <p>
+                    <input type="button" name="Send" value="Send" onclick="send_image()" />
+                    <input type="button" name="Clear" value="Clear" onclick="clear_canvas()" />
+                </p>
+            </div>
         </div>
     </div>
+
 </body>
 
 </html>

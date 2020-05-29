@@ -31,9 +31,11 @@ static const char *TAG = "APP";
 
 esp_err_t display_text_get_handler(httpd_req_t *req);
 esp_err_t display_clear_get_handler(httpd_req_t *req);
+esp_err_t display_post_image(httpd_req_t *req);
 esp_err_t html_get_index(httpd_req_t *req);
 esp_err_t html_get_css(httpd_req_t *req);
 esp_err_t html_get_js(httpd_req_t *req);
+
 
 void display_task(void *arg);
 
@@ -73,6 +75,11 @@ const httpd_uri_t js_uri = {
     .handler = html_get_js,
 };
 
+const httpd_uri_t image_uri = {
+    .uri = "/api/v1/display/image",
+    .method = HTTP_POST,
+    .handler = display_post_image,
+};
 
 httpd_handle_t start_webserver(void)
 {
@@ -88,6 +95,7 @@ httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &text_uri);
         httpd_register_uri_handler(server, &clear_uri);
         httpd_register_uri_handler(server, &index_uri);
+        httpd_register_uri_handler(server, &image_uri);
         httpd_register_uri_handler(server, &css_uri);
         httpd_register_uri_handler(server, &js_uri);
         httpd_register_uri_handler(server, &default_uri);

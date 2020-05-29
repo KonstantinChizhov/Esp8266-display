@@ -180,7 +180,7 @@ display_text_get_handler(httpd_req_t *req)
     ApplyCommonParameters(req, params, painter);
     draw_text(painter, params);
 
-    const char *resp_str = "Done";
+    const char *resp_str = "OK";
     httpd_resp_send(req, resp_str, strlen(resp_str));
     return ESP_OK;
 }
@@ -194,7 +194,86 @@ display_clear_get_handler(httpd_req_t *req)
     ApplyCommonParameters(req, params, painter);
     display.Fill(painter.GetColor());
 
-    const char *resp_str = "Done";
+    const char *resp_str = "OK";
+    httpd_resp_send(req, resp_str, strlen(resp_str));
+    return ESP_OK;
+}
+
+struct rect_t
+{
+    int x = 0;
+    int y = 0;
+    int w = 0;
+    int h = 0;
+};
+
+rect_t get_rect_params(httpd_req_t *req)
+{
+    rect_t rect;
+    char *buf;
+    size_t buf_len = httpd_req_get_url_query_len(req) + 1;
+    if (buf_len > 1)
+    {
+        buf = (char *)malloc(buf_len);
+        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK)
+        {
+            if (httpd_query_key_value(buf, "x", param, ParamBuffSize) == ESP_OK)
+            {
+                rect.x = atoi(param);
+            }
+            if (httpd_query_key_value(buf, "y", param, ParamBuffSize) == ESP_OK)
+            {
+                rect.y = atoi(param);
+            }
+            if (httpd_query_key_value(buf, "w", param, ParamBuffSize) == ESP_OK)
+            {
+                rect.w = atoi(param);
+                if (rect.w < 0)
+                {
+                    rect.w = 0;
+                }
+            }
+            if (httpd_query_key_value(buf, "h", param, ParamBuffSize) == ESP_OK)
+            {
+                rect.h = atoi(param);
+                if (rect.h < 0)
+                {
+                    rect.h = 0;
+                }
+            }
+        }
+        free(buf);
+    }
+    return rect;
+}
+
+extern "C" esp_err_t display_post_image(httpd_req_t *req)
+{
+    rect_t image_rect = get_rect_params(req);
+    MyPainter painter(display);
+    char buf[128];
+    int ret, remaining = req->content_len;
+
+    while (remaining > 0)
+    {
+        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)))) <= 0)
+        {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT)
+            {
+                continue;
+            }
+            return ESP_FAIL;
+        }
+        remaining -= ret;
+
+        int w = std::min(ret, image_rect.w);
+        int h = std::min((ret * 8 + image_rect.w - 1) / image_rect.w, image_rect.h);
+        RowOrderedBitmap<const uint8_t *> bitmap((const uint8_t *)(buf), w, h);
+
+        painter.DrawBitmap(bitmap, image_rect.x, image_rect.y);
+        image_rect.y += bitmap.Height();
+    }
+    const char *resp_str = "OK";
     httpd_resp_send(req, resp_str, strlen(resp_str));
     return ESP_OK;
 }
