@@ -67,20 +67,7 @@ struct UrlReader
     UrlReader operator++(int)
     {
         UrlReader temp(_url);
-        if (_url[0] != 0)
-        {
-            if (_url[0] == '%')
-            {
-                if (_url[1] && _url[2])
-                {
-                    _url += 3;
-                }
-            }
-            else
-            {
-                _url++;
-            }
-        }
+        (*this)++;
         return temp;
     }
 };

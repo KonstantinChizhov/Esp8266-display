@@ -62,39 +62,39 @@ static void ApplyCommonParameters(httpd_req_t *req, Params &params, MyPainter &p
             if (httpd_query_key_value(buf, "x", param, ParamBuffSize) == ESP_OK)
             {
                 params.x = atoi(param);
-                ESP_LOGI(TAG, "Found URL query parameter => x=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => x=%s", param);
             }
             if (httpd_query_key_value(buf, "y", param, ParamBuffSize) == ESP_OK)
             {
                 params.y = atoi(param);
-                ESP_LOGI(TAG, "Found URL query parameter => y=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => y=%s", param);
             }
             if (httpd_query_key_value(buf, "x2", param, ParamBuffSize) == ESP_OK)
             {
                 params.x2 = atoi(param);
-                ESP_LOGI(TAG, "Found URL query parameter => x2=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => x2=%s", param);
             }
             if (httpd_query_key_value(buf, "y2", param, ParamBuffSize) == ESP_OK)
             {
                 params.y2 = atoi(param);
-                ESP_LOGI(TAG, "Found URL query parameter => y2=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => y2=%s", param);
             }
             if (httpd_query_key_value(buf, "bkcolor", param, ParamBuffSize) == ESP_OK)
             {
                 int color = atoi(param);
                 painter.SetBackColor(color);
-                ESP_LOGI(TAG, "Found URL query parameter => bkcolor=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => bkcolor=%s", param);
             }
             if (httpd_query_key_value(buf, "color", param, ParamBuffSize) == ESP_OK)
             {
                 int color = atoi(param);
                 painter.SetColor(color);
-                ESP_LOGI(TAG, "Found URL query parameter => color=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => color=%s", param);
             }
             if (httpd_query_key_value(buf, "font", param, ParamBuffSize) == ESP_OK)
             {
                 params.font = atoi(param);
-                ESP_LOGI(TAG, "Found URL query parameter => font=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => font=%s", param);
             }
             if (httpd_query_key_value(buf, "mode", param, ParamBuffSize) == ESP_OK)
             {
@@ -118,16 +118,16 @@ static void ApplyCommonParameters(httpd_req_t *req, Params &params, MyPainter &p
                 {
                     painter.SetOutputMode(MyPainter::InvertMode);
                 }
-                ESP_LOGI(TAG, "Found URL query parameter => mode=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => mode=%s", param);
             }
             if (httpd_query_key_value(buf, "text", param, ParamBuffSize) == ESP_OK)
             {
-                ESP_LOGI(TAG, "Found URL query parameter => text=%s", param);
+                // ESP_LOGI(TAG, "Found URL query parameter => text=%s", param);
                 DecodeText(param, params.text, MaxText);
-                for (int i = 0; i < 20; i++)
-                {
-                    ESP_LOGI(TAG, "char = %d", (int)(params.text[i]));
-                }
+                // for (int i = 0; i < 20; i++)
+                // {
+                //     ESP_LOGI(TAG, "char = %d", (int)(params.text[i]));
+                // }
             }
         }
         free(buf);

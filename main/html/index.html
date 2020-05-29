@@ -1,0 +1,31 @@
+<html>
+
+<head>
+    <title>Web Display</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <script src="scripts.js"></script>
+</head>
+
+<body>
+    <script language="javascript">
+        window.onpageshow = function (e) {
+
+        }
+    </script>
+    <div id="container">
+        <div id="header">
+            <h2>ESP8266 WEB Display</h2>
+        </div>
+        <div id="content">
+            <div id="Form">
+                <p>Type a text:</p>
+                <textarea id="textToSend" cols="25" rows="8"></textarea>
+                <p>
+                <input type="button" name="Send" value="Send" onclick="sendtext()" />
+                <input type="button" name="Clear" value="Clear" onclick="clear_display()" />
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

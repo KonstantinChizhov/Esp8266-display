@@ -3,7 +3,8 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := simple
+PROJECT_NAME := wifi_display
+
 
 include $(IDF_PATH)/make/project.mk
 

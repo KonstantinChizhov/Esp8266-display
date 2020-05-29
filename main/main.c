@@ -16,7 +16,6 @@
 
 #include <esp_http_server.h>
 
-
 /* A simple example that demonstrates how to create GET and POST
  * handlers for the web server.
  * The examples use simple WiFi configuration that you can set via
@@ -28,30 +27,51 @@
 #define EXAMPLE_WIFI_SSID CONFIG_WIFI_SSID
 #define EXAMPLE_WIFI_PASS CONFIG_WIFI_PASSWORD
 
-
-static const char *TAG="APP";
-
-
+static const char *TAG = "APP";
 
 esp_err_t display_text_get_handler(httpd_req_t *req);
 esp_err_t display_clear_get_handler(httpd_req_t *req);
+esp_err_t html_get_index(httpd_req_t *req);
+esp_err_t html_get_css(httpd_req_t *req);
+esp_err_t html_get_js(httpd_req_t *req);
 
 void display_task(void *arg);
 
-
-httpd_uri_t text = {
-    .uri       = "/api/v1/display/text",
-    .method    = HTTP_GET,
-    .handler   = display_text_get_handler,
+httpd_uri_t text_uri = {
+    .uri = "/api/v1/display/text",
+    .method = HTTP_GET,
+    .handler = display_text_get_handler,
 };
 
-
-httpd_uri_t clear = {
-    .uri       = "/api/v1/display/clear",
-    .method    = HTTP_GET,
-    .handler   = display_clear_get_handler,
+httpd_uri_t clear_uri = {
+    .uri = "/api/v1/display/clear",
+    .method = HTTP_GET,
+    .handler = display_clear_get_handler,
 };
 
+httpd_uri_t index_uri = {
+    .uri = "/index.html",
+    .method = HTTP_GET,
+    .handler = html_get_index,
+};
+
+httpd_uri_t default_uri = {
+    .uri = "/",
+    .method = HTTP_GET,
+    .handler = html_get_index,
+};
+
+httpd_uri_t css_uri = {
+    .uri = "/main.css",
+    .method = HTTP_GET,
+    .handler = html_get_css,
+};
+
+httpd_uri_t js_uri = {
+    .uri = "/scripts.js",
+    .method = HTTP_GET,
+    .handler = html_get_js,
+};
 
 /* An HTTP PUT handler. This demonstrates realtime
  * registration and deregistration of URI handlers
@@ -61,32 +81,35 @@ esp_err_t ctrl_put_handler(httpd_req_t *req)
     char buf;
     int ret;
 
-   
-
     /* Respond with empty body */
     httpd_resp_send(req, NULL, 0);
     return ESP_OK;
 }
 
 httpd_uri_t ctrl = {
-    .uri       = "/ctrl",
-    .method    = HTTP_PUT,
-    .handler   = ctrl_put_handler,
-    .user_ctx  = NULL
-};
+    .uri = "/ctrl",
+    .method = HTTP_PUT,
+    .handler = ctrl_put_handler,
+    .user_ctx = NULL};
 
 httpd_handle_t start_webserver(void)
 {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-
+    
     // Start the httpd server
     ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
-    if (httpd_start(&server, &config) == ESP_OK) {
+    if (httpd_start(&server, &config) == ESP_OK)
+    {
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
-        httpd_register_uri_handler(server, &text);
-        httpd_register_uri_handler(server, &clear);
+        httpd_register_uri_handler(server, &text_uri);
+        httpd_register_uri_handler(server, &clear_uri);
+        httpd_register_uri_handler(server, &index_uri);
+        httpd_register_uri_handler(server, &css_uri);
+        httpd_register_uri_handler(server, &js_uri);
+        httpd_register_uri_handler(server, &default_uri);
+
         //httpd_register_uri_handler(server, &ctrl);
         return server;
     }
@@ -103,11 +126,12 @@ void stop_webserver(httpd_handle_t server)
 
 static esp_err_t event_handler(void *ctx, system_event_t *event)
 {
-    httpd_handle_t *server = (httpd_handle_t *) ctx;
+    httpd_handle_t *server = (httpd_handle_t *)ctx;
     /* For accessing reason codes in case of disconnection */
     system_event_info_t *info = &event->event_info;
 
-    switch(event->event_id) {
+    switch (event->event_id)
+    {
     case SYSTEM_EVENT_STA_START:
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_START");
         ESP_ERROR_CHECK(esp_wifi_connect());
@@ -115,24 +139,27 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
     case SYSTEM_EVENT_STA_GOT_IP:
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP");
         ESP_LOGI(TAG, "Got IP: '%s'",
-                ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+                 ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
 
         /* Start the web server */
-        if (*server == NULL) {
+        if (*server == NULL)
+        {
             *server = start_webserver();
         }
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");
         ESP_LOGE(TAG, "Disconnect reason : %d", info->disconnected.reason);
-        if (info->disconnected.reason == WIFI_REASON_BASIC_RATE_NOT_SUPPORT) {
+        if (info->disconnected.reason == WIFI_REASON_BASIC_RATE_NOT_SUPPORT)
+        {
             /*Switch to 802.11 bgn mode */
             esp_wifi_set_protocol(ESP_IF_WIFI_STA, WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N);
         }
         ESP_ERROR_CHECK(esp_wifi_connect());
 
         /* Stop the web server */
-        if (*server) {
+        if (*server)
+        {
             stop_webserver(*server);
             *server = NULL;
         }
