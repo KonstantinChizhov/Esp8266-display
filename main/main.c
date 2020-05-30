@@ -28,6 +28,7 @@
 #define EXAMPLE_WIFI_PASS CONFIG_WIFI_PASSWORD
 
 static const char *TAG = "APP";
+void show_connect_info(const char *ipStr);
 
 esp_err_t display_text_get_handler(httpd_req_t *req);
 esp_err_t display_clear_get_handler(httpd_req_t *req);
@@ -126,14 +127,15 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP");
-        ESP_LOGI(TAG, "Got IP: '%s'",
-                 ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
+        char * ipAddrStr = ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip);
+        ESP_LOGI(TAG, "Got IP: '%s'", ipAddrStr);
 
         /* Start the web server */
         if (*server == NULL)
         {
             *server = start_webserver();
         }
+        show_connect_info(ipAddrStr);
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_DISCONNECTED");

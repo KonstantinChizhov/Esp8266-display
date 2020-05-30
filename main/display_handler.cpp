@@ -278,6 +278,17 @@ extern "C" esp_err_t display_post_image(httpd_req_t *req)
     return ESP_OK;
 }
 
+extern "C" void show_connect_info(const char *ipStr)
+{
+    MyPainter painter(display);
+    painter.Clear();
+    painter.DrawText("ESP8266 display", 0, 0, bigFont);
+    painter.DrawText("Type this ip address", 0, 16, smallFont);
+    painter.DrawText("in your browser:", 0, 24, smallFont);
+    painter.DrawText(ipStr, 10, 34, bigFont);
+    painter.DrawBitmap(MyPainter::Checker(128,14), 0, 50);
+}
+
 extern "C" void display_task(void *arg)
 {
     ESP_LOGI(TAG, "Initializing I2C");
@@ -287,6 +298,12 @@ extern "C" void display_task(void *arg)
     vTaskDelay(100 / portTICK_RATE_MS);
     display.Init();
 
+    MyPainter painter(display);
+    painter.Clear();
+    painter.DrawText("ESP8266 display", 0, 0, bigFont);
+    painter.DrawText("Connecting to WiFi...", 0, 24, smallFont);
+
+    painter.DrawBitmap(MyPainter::Checker(128,20), 0, 44);
     while (true)
     {
         vTaskDelay(1000 / portTICK_RATE_MS);
