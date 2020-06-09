@@ -1,5 +1,6 @@
 import os.path
 import glob
+import zlib
 
 files = glob.glob(
     os.path.join(
@@ -11,7 +12,7 @@ files = glob.glob(
 for fileName in files:
     with open(fileName, "rb") as file:
         data = file.read()
-        
+        compressedData = zlib.compress(data, 9)
         recource_name = os.path.basename(fileName).replace('.', '_')
 
         resourceFileName =  os.path.join(
@@ -23,7 +24,7 @@ for fileName in files:
             resFile.write('#pragma once\n\n')
             resFile.write('const char %s[] = {\n' % recource_name)
             
-            for i, byte in enumerate(data):
+            for i, byte in enumerate(compressedData):
                 if i % 16 == 0:
                     resFile.write('\n\t')
                 resFile.write('0x%02x, ' % byte)
